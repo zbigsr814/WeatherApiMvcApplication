@@ -11,5 +11,5 @@ namespace WebApiClient
     {
         LocationWeather location { get; set; }
         CurrentWeather current { get; set; }
-    }
+	}
 }

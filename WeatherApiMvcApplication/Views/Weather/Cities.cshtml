@@ -1,7 +1,21 @@
-﻿@model WebApiClient.IWeather
+﻿@model List<WebApiClient.IWeather>
 
 
 <h1>Miasta</h1>
-<h3>
-	Temperatura: @Model.current.temp_c.ToString() °C
-</h3>
+
+@foreach (var item in @Model)
+{
+		<div class="card mb-2" style="padding: 10px; border-radius: 10px; background-color: lightseagreen;">
+			<h3>@item.location.name.ToString();</h3>
+			<a>
+				Aktualny stan pogody: @item.current.condition.text.ToString() <br>
+				Temperatura: @item.current.temp_c.ToString() °C <br>
+				Zachmurzenie: @item.current.cloud.ToString() % <br>
+				Wilgotność: @item.current.humidity.ToString() % <br>
+				Ciśnienie atmosferyczne: @item.current.pressure_mb.ToString() hPa <br>
+				Prędkość wiatru: @item.current.wind_mph.ToString() m/s <br>
+				Kierunek wiatru: @item.current.wind_dir.ToString() <br>
+			</a>
+		</div>
+	
+}

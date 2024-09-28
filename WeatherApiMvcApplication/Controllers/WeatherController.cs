@@ -19,7 +19,13 @@ namespace WeatherApiMvcApplication.Controllers
 
         public IActionResult Cities()
         {
-            IWeather weatherData = _weatherService.GetData();
+            List<IWeather> weatherData = new List<IWeather>()
+            {
+                _weatherService.GetData("krakow"),
+				_weatherService.GetData("warszawa"),
+				_weatherService.GetData("gdansk"),
+				_weatherService.GetData("katowice"),
+		};
             return View(weatherData);
         }
     }

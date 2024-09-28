@@ -11,13 +11,13 @@ namespace WebApiClient
 {
     public class WeatherService
     {
-        public IWeather GetData()
+        public IWeather GetData(string city)
         {
             var httpClient = new HttpClient();
 
             while (true)
             {
-                var inputFromUser = "krakow"; //InputText().Result;
+                var inputFromUser = city; //InputText().Result;
                 var normalCityToFind = RemoveSigns(inputFromUser);
 
                 using (UrlBuilder urlBuilder = new UrlBuilder(Consts.url, inputFromUser))
@@ -27,15 +27,7 @@ namespace WebApiClient
                     var responseFromSite = dataFromSite.Content.ReadAsStringAsync().Result;
                     IWeather deserializedData = JsonConvert.DeserializeObject<WeatherModel>(responseFromSite);     // tworzenie podstawowego obiektu
 
-                    //if (deserializedData.current != null)
-                    //{
-                    //    ShowWeatherData showWeatherData = new ShowWeatherData(deserializedData);
-                    //    showWeatherData.Show();
-                    //}
-                    //else
-                    //{
-                    //    Console.WriteLine("Nie znaleziono takiego miasta\n\n");
-                    //}
+                    // if (deserializedData.current == null)
 
                     return deserializedData;
                 }
