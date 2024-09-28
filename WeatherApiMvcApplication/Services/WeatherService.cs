@@ -11,31 +11,66 @@ namespace WebApiClient
 {
     public class WeatherService
     {
-        public IWeather GetData(string city)
+		private readonly IWebHostEnvironment _webHostEnvironment;
+
+		// Konstruktor z wstrzykniętym IWebHostEnvironment
+		public WeatherService(IWebHostEnvironment webHostEnvironment)
+		{
+			_webHostEnvironment = webHostEnvironment;
+		}
+
+		public async Task<IWeather> GetData(string city)
         {
             var httpClient = new HttpClient();
 
-            while (true)
+            var normalCityToFind = RemoveSigns(city);
+
+            using (UrlBuilder urlBuilder = new UrlBuilder(Consts.url, city))
             {
-                var inputFromUser = city; //InputText().Result;
-                var normalCityToFind = RemoveSigns(inputFromUser);
+                string apiUrl = urlBuilder.ReturnUrl();
+                var dataFromSite = httpClient.GetAsync(apiUrl).Result;
+                var responseFromSite = dataFromSite.Content.ReadAsStringAsync().Result;
+                IWeather deserializedData = JsonConvert.DeserializeObject<WeatherModel>(responseFromSite);     // tworzenie podstawowego obiektu
 
-                using (UrlBuilder urlBuilder = new UrlBuilder(Consts.url, inputFromUser))
-                {
-                    string apiUrl = urlBuilder.ReturnUrl();
-                    var dataFromSite = httpClient.GetAsync(apiUrl).Result;
-                    var responseFromSite = dataFromSite.Content.ReadAsStringAsync().Result;
-                    IWeather deserializedData = JsonConvert.DeserializeObject<WeatherModel>(responseFromSite);     // tworzenie podstawowego obiektu
+                deserializedData.current.condition.imagePath = await SaveImage($"https:{deserializedData.current.condition.icon}", city);
 
-                    // if (deserializedData.current == null)
+				// if (deserializedData.current == null)
 
-                    return deserializedData;
-                }
+				return deserializedData;
             }
         }
 
+		public async Task<string> SaveImage(string url, string city)
+		{
+			// Pobranie ścieżki do folderu wwwroot
+			var wwwRootPath = _webHostEnvironment.WebRootPath;
 
-        async Task<string> InputText()
+			// Połączenie ścieżki wwwroot z folderem images
+			var imagesPath = Path.Combine(wwwRootPath, $"images/weatherIcons");
+
+			// Tworzenie katalogu, jeśli nie istnieje
+			Directory.CreateDirectory(imagesPath);
+
+			// Pełna ścieżka do zapisu pliku
+			string outputFile = Path.Combine(imagesPath, $"image_{city}.jpg");
+
+			using (HttpClient client = new HttpClient())
+			{
+				var response = await client.GetAsync(url);
+				response.EnsureSuccessStatusCode();
+
+				using (var stream = await response.Content.ReadAsStreamAsync())
+				using (var fileStream = new FileStream(outputFile, FileMode.Create, FileAccess.Write))
+				{
+					await stream.CopyToAsync(fileStream);
+				}
+			}
+
+			// Zwróć ścieżkę względną, która jest dostępna z przeglądarki
+			return $"/images/weatherIcons/image_{city}.jpg";
+		}
+
+		async Task<string> InputText()
         {
             await Console.Out.WriteLineAsync("Podaj miasto dla którego chcesz wyszukać pogodę\nlub wpisz 'quit' aby zakończyć aplikację");
             var cityToFind = Console.ReadLine();

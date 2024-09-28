@@ -12,5 +12,5 @@ namespace WeatherApiMvcApplication.Models
     {
         public LocationWeather location { get; set; }
         public CurrentWeather current { get; set; }
-	}
+    }
 }

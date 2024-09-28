@@ -7,6 +7,13 @@
 {
 		<div class="card mb-2" style="padding: 10px; border-radius: 10px; background-color: lightseagreen;">
 			<h3>@item.location.name.ToString();</h3>
+
+
+			<img src="@item.current.condition.imagePath"
+				 class="card-img-top"
+				 alt="@item.current.condition.text"
+				 style="width: 64px; height: 64px; margin-right: 10px;"> <!-- Ustawiamy szerokość i wysokość -->
+			
 			<a>
 				Aktualny stan pogody: @item.current.condition.text.ToString() <br>
 				Temperatura: @item.current.temp_c.ToString() °C <br>

@@ -17,14 +17,14 @@ namespace WeatherApiMvcApplication.Controllers
             return View();
         }
 
-        public IActionResult Cities()
+        public async Task<IActionResult> Cities()
         {
             List<IWeather> weatherData = new List<IWeather>()
             {
-                _weatherService.GetData("krakow"),
-				_weatherService.GetData("warszawa"),
-				_weatherService.GetData("gdansk"),
-				_weatherService.GetData("katowice"),
+                await _weatherService.GetData("krakow"),
+				await _weatherService.GetData("warszawa"),
+				await _weatherService.GetData("gdansk"),
+				await _weatherService.GetData("barcelona"),
 		};
             return View(weatherData);
         }
