@@ -1,12 +1,21 @@
 ﻿@model List<WebApiClient.IWeather>
 
 
-<h1>Miasta</h1>
+<nav class="navbar bg-body-tertiary">
+	<div class="container-fluid">
+		<form class="d-flex" role="search" method="get" asp-controller="Weather" asp-action="Cities">
+			<input class="form-control me-2" name="searchingText" type="search" placeholder="Search" aria-label="Search" />
+			<button class="btn btn-outline-success" type="submit">Szukaj</button>
+		</form>
+	</div>
+</nav>
+
+@* <h1>Miasta</h1> *@
 
 @foreach (var item in @Model)
 {
 		<div class="card mb-2" style="padding: 10px; border-radius: 10px; background-color: lightseagreen;">
-			<h3>@item.location.name.ToString();</h3>
+			<h3>@item.location.name.ToString()</h3>
 
 
 			<img src="@item.current.condition.imagePath"

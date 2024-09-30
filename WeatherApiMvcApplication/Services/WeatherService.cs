@@ -32,13 +32,26 @@ namespace WebApiClient
                 var responseFromSite = dataFromSite.Content.ReadAsStringAsync().Result;
                 IWeather deserializedData = JsonConvert.DeserializeObject<WeatherModel>(responseFromSite);     // tworzenie podstawowego obiektu
 
-                deserializedData.current.condition.imagePath = await SaveImage($"https:{deserializedData.current.condition.icon}", city);
+                deserializedData.location.name = ShortenCityName(deserializedData.location.name, city);
+                deserializedData.current.condition.imagePath = await SaveImage($"https:{deserializedData.current.condition.icon}", city);   // zapisanie ikony pogody
 
 				// if (deserializedData.current == null)
 
 				return deserializedData;
             }
         }
+
+		private string ShortenCityName(string cityFromJson, string inputFromUserCity)
+		{
+			string shortenCity = null;
+
+            for (int i = 0; i < inputFromUserCity.Length; i++)
+            {
+                shortenCity += cityFromJson[i];
+            }
+
+			return shortenCity;
+		}
 
 		public async Task<string> SaveImage(string url, string city)
 		{
@@ -51,7 +64,8 @@ namespace WebApiClient
 			// Tworzenie katalogu, jeśli nie istnieje
 			Directory.CreateDirectory(imagesPath);
 
-			// Pełna ścieżka do zapisu pliku
+            // Pełna ścieżka do zapisu pliku
+            city = city.Replace(" ", "_");
 			string outputFile = Path.Combine(imagesPath, $"image_{city}.jpg");
 
 			using (HttpClient client = new HttpClient())
@@ -69,6 +83,7 @@ namespace WebApiClient
 			// Zwróć ścieżkę względną, która jest dostępna z przeglądarki
 			return $"/images/weatherIcons/image_{city}.jpg";
 		}
+
 
 		async Task<string> InputText()
         {
