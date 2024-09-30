@@ -32,7 +32,8 @@ namespace WebApiClient
                 var responseFromSite = dataFromSite.Content.ReadAsStringAsync().Result;
                 IWeather deserializedData = JsonConvert.DeserializeObject<WeatherModel>(responseFromSite);     // tworzenie podstawowego obiektu
 
-                deserializedData.location.name = ShortenCityName(deserializedData.location.name, city);
+                if (deserializedData.location == null) return null;
+                deserializedData.location.name = ShortenCityName(deserializedData.location.name, city);     // korekta nazwy miasta
                 deserializedData.current.condition.imagePath = await SaveImage($"https:{deserializedData.current.condition.icon}", city);   // zapisanie ikony pogody
 
 				// if (deserializedData.current == null)

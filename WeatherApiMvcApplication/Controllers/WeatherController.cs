@@ -25,34 +25,26 @@ namespace WeatherApiMvcApplication.Controllers
 
             if (searchingText != null)
             {
-                weatherData.Add(await _weatherService.GetData(searchingText));
-            }
-            else
-            {
-				weatherData.AddRange(
-                new List<IWeather>()
+                IWeather weather = await _weatherService.GetData(searchingText);
+
+                if (weather != null)
                 {
-					await _weatherService.GetData("krakow"),
-				    await _weatherService.GetData("warszawa"),
-				    await _weatherService.GetData("gdansk"),
-				    await _weatherService.GetData("sucha beskidzka")
+					weatherData.Add(weather);
+					return View(weatherData);
 				}
-			   );
+            }
+
+			weatherData.AddRange(
+            new List<IWeather>()
+            {
+				await _weatherService.GetData("krakow"),
+				await _weatherService.GetData("warszawa"),
+				await _weatherService.GetData("gdansk"),
+				await _weatherService.GetData("sucha beskidzka")
 			}
+			);
 
             return View(weatherData);
         }
-
-   //     public async Task<IActionResult> Search([FromQuery] string searchingText = null)
-   //     {
-			//var referer = Request.Headers["Referer"].ToString();
-			//if (searchingText == null) return RedirectToAction(referer);
-
-   //         List<IWeather> weatherData = new List<IWeather>()
-   //         {
-			//	await _weatherService.GetData(searchingText);
-		 //   };
-   //         return RedirectToAction(referer, );
-	  //  }
     }
 }
