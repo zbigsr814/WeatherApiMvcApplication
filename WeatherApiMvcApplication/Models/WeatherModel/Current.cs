@@ -4,16 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WeatherApiMvcApplication.Models
+namespace WeatherApiMvcApplication.Models.WeatherModel
 {
-    public class CurrentWeather
+    public class Current
     {
         public long last_updated_epoch { get; set; }
         public DateTime last_updated { get; set; }
         public float temp_c { get; set; }
         public float temp_f { get; set; }
         public string is_day { get; set; }
-        public ConditionWeather condition { get; set; }
+        public Condition condition { get; set; }
         public float wind_mph { get; set; }
         public float wind_kph { get; set; }
         public float wind_degree { get; set; }

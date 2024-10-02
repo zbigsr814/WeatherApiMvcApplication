@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WeatherApiMvcApplication.Models
+namespace WeatherApiMvcApplication.Models.WeatherModel
 {
-    public class ConditionWeather
+    public class Condition
     {
         public string text { get; set; }
         public string icon { get; set; }

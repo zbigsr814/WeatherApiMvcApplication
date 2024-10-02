@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using WeatherApiMvcApplication.Models;
+using WeatherApiMvcApplication.Models.WeatherModel;
 
 namespace WebApiClient
 {
@@ -19,18 +19,18 @@ namespace WebApiClient
 			_webHostEnvironment = webHostEnvironment;
 		}
 
-		public async Task<IWeather> GetData(string city)
+		public async Task<IWeather> GetActualWeather(string city, int days = 0)
         {
             var httpClient = new HttpClient();
 
             var normalCityToFind = RemoveSigns(city);
 
-            using (UrlBuilder urlBuilder = new UrlBuilder(Consts.url, city))
+            using (UrlBuilder urlBuilder = new UrlBuilder(Consts.url, city, days))
             {
                 string apiUrl = urlBuilder.ReturnUrl();
                 var dataFromSite = httpClient.GetAsync(apiUrl).Result;
                 var responseFromSite = dataFromSite.Content.ReadAsStringAsync().Result;
-                IWeather deserializedData = JsonConvert.DeserializeObject<WeatherModel>(responseFromSite);     // tworzenie podstawowego obiektu
+                IWeather deserializedData = JsonConvert.DeserializeObject<WeatherData>(responseFromSite);     // tworzenie podstawowego obiektu
 
                 if (deserializedData.location == null) return null;
                 deserializedData.location.name = ShortenCityName(deserializedData.location.name, city);     // korekta nazwy miasta

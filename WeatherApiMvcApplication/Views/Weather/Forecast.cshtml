@@ -1,0 +1,93 @@
+﻿@using System.Globalization;
+@model List<WebApiClient.IWeather>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Dodanie Chart.js -->
+
+
+
+
+<nav class="navbar bg-body-tertiary">
+	<div class="container-fluid">
+		<form class="d-flex" role="search" method="get" asp-controller="Weather" asp-action="Cities">
+			<input class="form-control me-2" name="searchingText" type="search" placeholder="Search" aria-label="Search" />
+			<button class="btn btn-outline-success" type="submit">Szukaj</button>
+		</form>
+	</div>
+</nav>
+
+@* <h1>Miasta</h1> *@
+
+<canvas id="temperatureChart" style="width:100%;max-width:700px"></canvas>
+
+<h3>@Model[0].location.name</h3>
+@foreach (var dayItem in @Model[0].forecast.forecastday)
+{
+	<h2>@dayItem.date</h2>
+	foreach (var hourItem in dayItem.hour)
+	{
+		<div class="card mb-2" style="padding: 10px; border-radius: 10px; background-color: lightseagreen;">
+			<h2>@hourItem.time</h2>
+
+
+			@* <img src="@item.current.condition.imagePath"
+	class="card-img-top"
+	alt="@item.current.condition.text"
+	style="width: 64px; height: 64px; margin-right: 10px;"> <!-- Ustawiamy szerokość i wysokość --> *@
+
+			<a>
+				Aktualny stan pogody: @hourItem.condition.text <br>
+				Temperatura: @hourItem.temp_c °C <br>
+				Zachmurzenie: @hourItem.cloud % <br>
+				Wilgotność: @hourItem.humidity % <br>
+				Ciśnienie atmosferyczne: @hourItem.pressure_mb hPa <br>
+				Prędkość wiatru: @hourItem.wind_mph m/s <br>
+				Kierunek wiatru: @hourItem.wind_dir <br>
+				Ilość opadów deszczu: @hourItem.precip_mm <br>
+			</a>
+		</div>
+
+	}
+}
+
+
+
+
+<script>
+    var labels = [];
+    var temperatures = [];
+    var hourIndex = 0;
+
+    @foreach (var dayItem in @Model[0].forecast.forecastday)
+    {
+        @foreach (var hourItem in dayItem.hour)
+        {
+            <text>labels.push('@hourItem.time');</text>
+            <text>temperatures.push(@hourItem.temp_c.ToString(CultureInfo.InvariantCulture));</text>
+        }
+    }
+
+    console.log(labels); // Dodaj to, aby sprawdzić, co jest w tablicach
+    console.log(temperatures);
+
+    var ctx = document.getElementById('temperatureChart').getContext('2d');
+    var temperatureChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Temperatura (°C)',
+                data: temperatures,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WeatherApiMvcApplication.Models
+namespace WeatherApiMvcApplication.Models.WeatherModel
 {
-    public class LocationWeather
+    public class Location
     {
         public string name { get; set; }
         public string region { get; set; }
