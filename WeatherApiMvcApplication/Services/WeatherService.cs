@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace WebApiClient
 			_webHostEnvironment = webHostEnvironment;
 		}
 
-		public async Task<IWeather> GetActualWeather(string city, int days = 0)
+		public async Task<IWeather> GetWeather(string city, int days = 0)
         {
             var httpClient = new HttpClient();
 
@@ -28,14 +29,26 @@ namespace WebApiClient
             using (UrlBuilder urlBuilder = new UrlBuilder(Consts.url, city, days))
             {
                 string apiUrl = urlBuilder.ReturnUrl();
-                var dataFromSite = httpClient.GetAsync(apiUrl).Result;
-                var responseFromSite = dataFromSite.Content.ReadAsStringAsync().Result;
-                IWeather deserializedData = JsonConvert.DeserializeObject<WeatherData>(responseFromSite);     // tworzenie podstawowego obiektu
+                IWeather deserializedData;
 
+                try
+                {
+                    var dataFromSite = httpClient.GetAsync(apiUrl).Result;
+                    var responseFromSite = dataFromSite.Content.ReadAsStringAsync().Result;
+                    deserializedData = JsonConvert.DeserializeObject<WeatherData>(responseFromSite);     // tworzenie podstawowego obiektu
+                }
+                catch
+                {
+                    deserializedData = null;
+                }
+
+
+                if (deserializedData == null) return null;
                 if (deserializedData.location == null) return null;
                 deserializedData.location.name = ShortenCityName(deserializedData.location.name, city);     // korekta nazwy miasta
-                deserializedData.current.condition.imagePath = await SaveImage($"https:{deserializedData.current.condition.icon}", city);   // zapisanie ikony pogody
 
+                deserializedData.current.condition.imagePath = await SaveImage($"https:{deserializedData.current.condition.icon}", city);   // zapisanie ikony pogody
+                
 				// if (deserializedData.current == null)
 
 				return deserializedData;
@@ -85,18 +98,23 @@ namespace WebApiClient
 			return $"/images/weatherIcons/image_{city}.jpg";
 		}
 
-
-		async Task<string> InputText()
+        public void ClearImagesFolder()
         {
-            await Console.Out.WriteLineAsync("Podaj miasto dla którego chcesz wyszukać pogodę\nlub wpisz 'quit' aby zakończyć aplikację");
-            var cityToFind = Console.ReadLine();
-            isUserWantToQuit(cityToFind);
-            return cityToFind;
-        }
+            // Ścieżka do folderu wwwroot/images
+            var imagesFolderPath = Path.Combine(_webHostEnvironment.WebRootPath, "images/weatherIcons");
 
-        private void isUserWantToQuit(string? cityToFind)
-        {
-            if (cityToFind == "quit") System.Environment.Exit(1);
+            // Sprawdzanie, czy folder istnieje
+            if (Directory.Exists(imagesFolderPath))
+            {
+                // Pobranie wszystkich plików w folderze images
+                var files = Directory.GetFiles(imagesFolderPath);
+
+                // Usunięcie każdego pliku
+                foreach (var file in files)
+                {
+                    System.IO.File.Delete(file);
+                }
+            }
         }
 
         string RemoveSigns(string text)

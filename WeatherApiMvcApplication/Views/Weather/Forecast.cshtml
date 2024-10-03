@@ -15,54 +15,59 @@
 	</div>
 </nav>
 
-@* <h1>Miasta</h1> *@
 
-<canvas id="temperatureChart" style="width:100%;max-width:700px"></canvas>
-
-<h3>@Model[0].location.name</h3>
-@foreach (var dayItem in @Model[0].forecast.forecastday)
+@if (Model[0] != null)
 {
-	<h2>@dayItem.date</h2>
-	foreach (var hourItem in dayItem.hour)
-	{
-		<div class="card mb-2" style="padding: 10px; border-radius: 10px; background-color: lightseagreen;">
-			<h2>@hourItem.time</h2>
+
+    <h3>Prognoza dla miasta @Model[0].location.name</h3>
+    <canvas id="temperatureChart" style="width:100%;max-width:1000px;max-height:300px"></canvas>
+    
+    @foreach (var dayItem in @Model[0].forecast.forecastday)
+    {
+	    <h2>Szczegółowe informacje pogodowe</h2>
+	    foreach (var hourItem in dayItem.hour)
+	    {
+		    <div class="card mb-2" style="padding: 10px; border-radius: 10px; background-color: lightseagreen;">
+			    <h5>@hourItem.time</h5>
 
 
-			@* <img src="@item.current.condition.imagePath"
-	class="card-img-top"
-	alt="@item.current.condition.text"
-	style="width: 64px; height: 64px; margin-right: 10px;"> <!-- Ustawiamy szerokość i wysokość --> *@
+			    @* <img src="@hourItem.condition.imagePath"
+	    class="card-img-top"
+	    alt="@hourItem.condition.text"
+	    style="width: 64px; height: 64px; margin-right: 10px;"> <!-- Ustawiamy szerokość i wysokość --> *@
 
-			<a>
-				Aktualny stan pogody: @hourItem.condition.text <br>
-				Temperatura: @hourItem.temp_c °C <br>
-				Zachmurzenie: @hourItem.cloud % <br>
-				Wilgotność: @hourItem.humidity % <br>
-				Ciśnienie atmosferyczne: @hourItem.pressure_mb hPa <br>
-				Prędkość wiatru: @hourItem.wind_mph m/s <br>
-				Kierunek wiatru: @hourItem.wind_dir <br>
-				Ilość opadów deszczu: @hourItem.precip_mm <br>
-			</a>
-		</div>
+			    <a>
+				    Stan pogody: @hourItem.condition.text <br>
+				    Temperatura: @hourItem.temp_c °C <br>
+                    Ilość opadów deszczu: @hourItem.precip_mm <br>
+				    Zachmurzenie: @hourItem.cloud % <br>
+				    Wilgotność: @hourItem.humidity % <br>
+			    </a>
+		    </div>
 
-	}
-}
+	    }
+    }
 
-
-
-
-<script>
+	<script>
     var labels = [];
     var temperatures = [];
-    var hourIndex = 0;
+    var precip_mm = [];
 
     @foreach (var dayItem in @Model[0].forecast.forecastday)
     {
         @foreach (var hourItem in dayItem.hour)
         {
-            <text>labels.push('@hourItem.time');</text>
+
+            <text>
+                if ('@hourItem.time.ToString().Substring(11)' == '00:00') {
+                    labels.push('@hourItem.time.ToString()');
+                }
+                else {
+                    labels.push('@hourItem.time.ToString().Substring(11)');
+                }
+            </text>
             <text>temperatures.push(@hourItem.temp_c.ToString(CultureInfo.InvariantCulture));</text>
+            <text>precip_mm.push(@hourItem.precip_mm.ToString(CultureInfo.InvariantCulture));</text>
         }
     }
 
@@ -70,24 +75,61 @@
     console.log(temperatures);
 
     var ctx = document.getElementById('temperatureChart').getContext('2d');
-    var temperatureChart = new Chart(ctx, {
-        type: 'line',
+    var mixedChart = new Chart(ctx, {
+        type: 'bar', // Typ główny wykresu
         data: {
             labels: labels,
-            datasets: [{
-                label: 'Temperatura (°C)',
-                data: temperatures,
-                borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderWidth: 1
-            }]
+            datasets: [
+                {
+                    type: 'line', // Typ dla temperatury
+                    label: 'Temperatura (°C)',
+                    data: temperatures,
+                    borderColor: 'rgba(255, 0, 0, 1)',
+                    backgroundColor: 'rgba(255, 0, 0, 0.2)',
+                    borderWidth: 1,
+                    yAxisID: 'y1' // Pierwsza oś Y
+                },
+                {
+                    type: 'bar', // Typ dla opadów
+                    label: 'Opady (mm)',
+                    data: precip_mm,
+                    borderColor: 'rgba(0, 0, 255, 1)',
+                    backgroundColor: 'rgba(0, 0, 255, 0.2)',
+                    borderWidth: 1,
+                    yAxisID: 'y2' // Druga oś Y
+                }
+            ]
         },
         options: {
             scales: {
-                y: {
-                    beginAtZero: true
+                y1: { // Pierwsza oś Y (dla temperatury)
+                    beginAtZero: true,
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: 'Temperatura (°C)'
+                    }
+                },
+                y2: { // Druga oś Y (dla opadów)
+                    beginAtZero: true,
+                    position: 'right',
+                    title: {
+                        display: true,
+                        text: 'Opady (mm)'
+                    },
+                    grid: {
+                        drawOnChartArea: false // Ukryj siatkę dla drugiej osi Y
+                    }
                 }
             }
         }
     });
-</script>
+    </script>
+}
+
+
+
+
+
+
+

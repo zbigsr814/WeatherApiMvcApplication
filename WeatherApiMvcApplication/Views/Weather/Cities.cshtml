@@ -11,9 +11,10 @@
 </nav>
 
 @* <h1>Miasta</h1> *@
-
-@foreach (var item in @Model)
+@if (Model[0] != null)
 {
+	@foreach (var item in @Model)
+	{
 		<div class="card mb-2" style="padding: 10px; border-radius: 10px; background-color: lightseagreen;">
 			<h3>@item.location.name.ToString()</h3>
 
@@ -22,7 +23,7 @@
 				 class="card-img-top"
 				 alt="@item.current.condition.text"
 				 style="width: 64px; height: 64px; margin-right: 10px;"> <!-- Ustawiamy szerokość i wysokość -->
-			
+
 			<a>
 				Aktualny stan pogody: @item.current.condition.text.ToString() <br>
 				Temperatura: @item.current.temp_c.ToString() °C <br>
@@ -33,5 +34,7 @@
 				Kierunek wiatru: @item.current.wind_dir.ToString() <br>
 			</a>
 		</div>
-	
+
+	}
 }
+

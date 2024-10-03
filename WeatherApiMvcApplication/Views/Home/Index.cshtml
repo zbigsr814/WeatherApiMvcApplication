@@ -1,8 +1,36 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            background-image: url('/images/backgrounds/main-background.jpg');
+            background-color: #331177; /* Białe tło */
+            padding: 20px; /* Odstępy wokół treści */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+    </style>
+</head>
+<body>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+    <div class="main-section">
+        <div class="card mb-2" style="padding: 10px; border-radius: 10px; background-color: lightskyblue;">
+            <h1>Aplikacja Meteo</h1>
+            <p>Najbardziej aktualne informacje pogodowe</p>
+            <p>Prognozy pogody każdego miasta na świecie</p>
+        </div>
+    </div>
+
+
+    <style>
+        .main-section {
+            text-align: center; /* Wyśrodkowuje tekst poziomo */
+            padding: 20px;
+            color: white;
+            margin: 100px;
+        }
+    </style>
+
+</body>
+</html>

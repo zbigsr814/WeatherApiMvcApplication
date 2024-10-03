@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.RenderTree;
 using Microsoft.AspNetCore.Mvc;
-using WeatherApiMvcApplication.Services;
+
 using WebApiClient;
 
 namespace WeatherApiMvcApplication.Controllers
@@ -9,11 +9,9 @@ namespace WeatherApiMvcApplication.Controllers
     public class WeatherController : Controller
     {
         private WeatherService _weatherService;
-        private ForecastService _forecastService;
-        public WeatherController(WeatherService weatherService, ForecastService forecastService)
+        public WeatherController(WeatherService weatherService)
         {
             _weatherService = weatherService;
-            _forecastService = forecastService;
         }
 
         public IActionResult Index()
@@ -27,7 +25,7 @@ namespace WeatherApiMvcApplication.Controllers
 
             if (searchingText != null)
             {
-                IWeather weather = await _weatherService.GetActualWeather(searchingText);
+                IWeather weather = await _weatherService.GetWeather(searchingText);
 
                 if (weather != null)
                 {
@@ -40,13 +38,14 @@ namespace WeatherApiMvcApplication.Controllers
 				return View(weatherData);
 			}
 
-			weatherData.AddRange(
+			_weatherService.ClearImagesFolder();
+            weatherData.AddRange(
             new List<IWeather>()
             {
-				await _weatherService.GetActualWeather("krakow"),
-				await _weatherService.GetActualWeather("warszawa"),
-				await _weatherService.GetActualWeather("gdansk"),
-				await _weatherService.GetActualWeather("sucha beskidzka")
+				await _weatherService.GetWeather("krakow"),
+				await _weatherService.GetWeather("warszawa"),
+				await _weatherService.GetWeather("gdansk"),
+				await _weatherService.GetWeather("sucha beskidzka")
 			}
 			);
 
@@ -59,7 +58,7 @@ namespace WeatherApiMvcApplication.Controllers
 
 			if (searchingText != null)
 			{
-				IWeather weather = await _weatherService.GetActualWeather(searchingText, 3);
+				IWeather weather = await _weatherService.GetWeather(searchingText, 3);
 
 				if (weather != null)
 				{
@@ -72,13 +71,14 @@ namespace WeatherApiMvcApplication.Controllers
 				return View(weatherData);
 			}
 
-			weatherData.AddRange(
+			_weatherService.ClearImagesFolder();
+            weatherData.AddRange(
 			new List<IWeather>()
 			{
-				await _weatherService.GetActualWeather("krakow", 3),
-				await _weatherService.GetActualWeather("warszawa", 3),
-				await _weatherService.GetActualWeather("gdansk", 3),
-				await _weatherService.GetActualWeather("sucha beskidzka", 3)
+				await _weatherService.GetWeather("krakow", 3),
+				await _weatherService.GetWeather("warszawa", 3),
+				await _weatherService.GetWeather("gdansk", 3),
+				await _weatherService.GetWeather("sucha beskidzka", 3)
 			}
 			);
 

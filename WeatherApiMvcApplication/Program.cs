@@ -1,4 +1,4 @@
-using WeatherApiMvcApplication.Services;
+
 using WebApiClient;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,7 +6,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<WeatherService>();
-builder.Services.AddScoped<ForecastService>();
 
 var app = builder.Build();
 
