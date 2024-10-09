@@ -1,6 +1,11 @@
-Aplikacja pobiera i wyświetla dane z darmowego api pogodowego ze strony https://www.weatherapi.com/
-Najpierw tworzony jest odpowiedni URL zawierajęcy nazwę miasta i ilość dni z prognozą pogody, który odpytuje api pogodowe.
-Api pogodowe w odpowiedzi wysyła plik JSON, który następnie w mojej aplikacji jest deserializowany.
-Następnie tworzone są odpowiednie modele zawierające dane pogodowe. Modele przesyłane są w akcji kontrolera do widoków i prezentowane na stronie.
+DESCRIPTION
+The application retrieves and displays data from a free weather api from https://www.weatherapi.com/ First, a corresponding URL containing the name of the city and the number of days with the weather forecast is created, which queries the weather api. The weather api sends a JSON file in response, which is then deserialized in my application. The corresponding models containing the weather data are then created. The models are sent in a controller action to the views and presented on the page.
 
-Mamy do wyboru wyświetlenie aktualnej pogdy dla danych miast oraz prognozy pogody na najbliższe 3 dni. Wykorzystano ASP.NET MVC, wykresy tworzone przy pomocy Chart.js
+We have the choice of displaying the current weather for the given cities and the weather forecast for the next 3 days. 
+
+TECHNOLOGIES USED
+- ASP.NET MVC
+- Newtonsoft JSON
+- Razor code
+- .Net HttpClient for connecting to an external api
+- Chart.js
